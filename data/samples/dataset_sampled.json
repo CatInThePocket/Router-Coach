@@ -1,0 +1,122 @@
+[
+  {
+    "query": "Is the Dyson Airwrap cheaper to buy in London or New York right now?",
+    "needs_search": true,
+    "Category": "Product & Price Comparison"
+  },
+  {
+    "query": "Is the Logitech MX Master 3S cheaper to buy refurbished?",
+    "needs_search": true,
+    "Category": "Product & Price Comparison"
+  },
+  {
+    "query": "What is the process by which plants make their food?",
+    "needs_search": false,
+    "Category": "Static World Knowledge"
+  },
+  {
+    "query": "Which planet is known as the Red Planet?",
+    "needs_search": false,
+    "Category": "Static World Knowledge"
+  },
+  {
+    "query": "What is the current gold spot price per ounce?",
+    "needs_search": true,
+    "Category": "Real-Time Data Streams"
+  },
+  {
+    "query": "What is the current Bitcoin dominance percentage in the crypto market?",
+    "needs_search": true,
+    "Category": "Real-Time Data Streams"
+  },
+  {
+    "query": "What are the reviews for 'The Breakfast Club' cafe in London?",
+    "needs_search": true,
+    "Category": "Local & Geo-Specific"
+  },
+  {
+    "query": "Are there any gluten-free bakeries in Melbourne?",
+    "needs_search": true,
+    "Category": "Local & Geo-Specific"
+  },
+  {
+    "query": "What is the next number in the sequence: 2, 4, 8, 16, ...?",
+    "needs_search": false,
+    "Category": "Mathematics & Logic"
+  },
+  {
+    "query": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
+    "needs_search": false,
+    "Category": "Mathematics & Logic"
+  },
+  {
+    "query": "What were the casualties in the Iranian ballistic missile strike on Beit Shemesh yesterday?",
+    "needs_search": true,
+    "Category": "Breaking News & Current Events"
+  },
+  {
+    "query": "What is the result of the preliminary injunction request by Anthropic against the Pentagon?",
+    "needs_search": true,
+    "Category": "Breaking News & Current Events"
+  },
+  {
+    "query": "How do you say 'Thank you' in ten different languages?",
+    "needs_search": false,
+    "Category": "Language & Translation"
+  },
+  {
+    "query": "Rewrite this sentence in a more formal tone: 'I'm sorry I can't come to your party.'",
+    "needs_search": false,
+    "Category": "Language & Translation"
+  },
+  {
+    "query": "You are a professional negotiator. Help me figure out how to ask for a raise.",
+    "needs_search": false,
+    "Category": "Roleplay & Persona"
+  },
+  {
+    "query": "Pretend you are a tree that has lived for 500 years. Tell me what you've seen.",
+    "needs_search": false,
+    "Category": "Roleplay & Persona"
+  },
+  {
+    "query": "How do you handle exceptions in Java?",
+    "needs_search": false,
+    "Category": "Technical & Coding"
+  },
+  {
+    "query": "What is a 'decorator' in Python?",
+    "needs_search": false,
+    "Category": "Technical & Coding"
+  },
+  {
+    "query": "What is the user's primary complaint in this support ticket? [Text]",
+    "needs_search": false,
+    "Category": "Summarization & Extraction"
+  },
+  {
+    "query": "Summarize this scientific abstract into a single tweet: [Text]",
+    "needs_search": false,
+    "Category": "Summarization & Extraction"
+  },
+  {
+    "query": "Who won the 2024 Pulitzer Prize for Fiction?",
+    "needs_search": true,
+    "Category": "Post-Cutoff Knowledge"
+  },
+  {
+    "query": "Who won the 2024 UEFA Champions League final?",
+    "needs_search": true,
+    "Category": "Post-Cutoff Knowledge"
+  },
+  {
+    "query": "Create a tagline for a luxury brand of fountain pens.",
+    "needs_search": false,
+    "Category": "Creative Writing & Brainstorming"
+  },
+  {
+    "query": "What are some creative ways to reuse old glass jars?",
+    "needs_search": false,
+    "Category": "Creative Writing & Brainstorming"
+  }
+]

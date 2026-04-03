@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations":[
+        {
+            "name": "Run Python from root",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/masin.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
+            
+        }
+    ]
+
+}

@@ -1,0 +1,11 @@
+.env
+bin/
+include/
+lib/
+lib64/
+lib64
+share/
+__pycache__/
+pyvenv.cfg
+outputs/history/
+router_tests/

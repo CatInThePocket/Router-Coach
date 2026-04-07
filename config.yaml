@@ -1,0 +1,26 @@
+#Router & Data Settings
+router:
+  model: "llama3"
+  samples_per_category: 1 #number of questions to pick from each category
+
+#Coach Settings
+coach:
+  model: "deepseek-r1:8b"
+  temperature: 0.7
+  timeout: 180    #Timeout for the model
+  max_iterations: 10 #Number of total runs of prompt improvemnt
+  patience: 3 #Maximum number of times the process will run with no improvement
+
+#paths
+paths:
+  dataset: "data/dataset.json"
+  samples_dir: "data/samples"
+  prompts_dir: "prompts"
+  snapshot_dir: "outputs/history"
+  reports_dir: "outputs/reports"
+  logs_dir: "outputs/logs"
+
+#Process values
+process:
+  verbose: True
+

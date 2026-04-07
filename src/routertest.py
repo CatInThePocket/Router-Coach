@@ -1,181 +1,109 @@
-import requests
-import json
 import os
-from datetime import datetime
-from dotenv import load_dotenv
-from reporter import save_markdown_report
+import json
+import random
+import requests
+import datetime
+from pathlib import Path
+from collections import defaultdict
+from typing import Dict, List, Tuple, Any, Optional
+import sys
+import json
+import logging
 
 
-#Loading key
+# Constants
+CUTOFF_DATE = "March 2023"
+OLLAMA_URL = "http://localhost:11434/api/chat"
 
-load_dotenv()
-
-#Serper key for the search
-SERPER_API_KEY = os.getenv("SERPER_API_KEY")
-
-#We get the system prompt
-
-def get_system_prompt():
-    #Calculate injected variables
-    #We get the date from the system, in order to inject it into the system prompt
-    cutoff = "March 2023"
-    today = datetime.now().strftime("%A, %B %d, %Y")
-
-    #Load raw text file with the prompt
-    base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'prompts') #os.path twice, up to root and back down to 'prompts'
-    prompt_path = os.path.join(base_path, "router_prompt.txt")
-
+def get_system_prompt() -> str:
+    """Loads the router prompt template and injects dynamic dates."""
+    today = datetime.datetime.now().strftime("%A, %B %d, %Y")
+    base_path = Path(__file__).parent.parent / 'prompts'
+    prompt_path = base_path / "router_prompt.txt"
     with open(prompt_path, "r", encoding="utf-8") as f:
         template = f.read()
+    return template.format(today=today, cutoff=CUTOFF_DATE)
 
-    #Inject the variables into the placeholders
-    full_prompt = template.format(today = today, cutoff = cutoff)
-
-    return full_prompt
-#We create the router function for the model
-
-def routertest(user_question, prompt,model):
-    url = "http://localhost:11434/api/chat"
-    
-    cutoff = "March 2023"
-    today = datetime.now().strftime("%A, %B %d, %Y")
-    
-
-    system_instructions = (prompt
-    )
+def routertest(user_question: str, prompt: str, model: str = "llama3") -> str:
+    """Determines if a query needs SEARCH or INTERNAL knowledge."""
     payload = {
         "model": model,
         "messages": [
-            {"role": "system", "content": system_instructions},
+            {"role": "system", "content": prompt},
             {"role": "user", "content": user_question}
         ],
-        "options": {
-            "temperature": 0.0 #Forced Consistency
-        },
+        "options": {"temperature": 0.0},
         "stream": False
     }
+    response = requests.post(OLLAMA_URL, json=payload, timeout=30)
+    content = response.json().get('message', {}).get('content', '').upper()
+    return "SEARCH" if "SEARCH:" in content else "INTERNAL"
 
-    response = requests.post(url, json=payload)
-    #print(response.json()['message']['content'])
-    return "SEARCH" if "SEARCH:" in response.json()['message']['content'] else "INTERNAL"
-    
-#print(routertest("What is the weather today?", get_system_prompt(), "llama3"))
-
-def load_tests(sample_per_category=None):
-    print(f"I am running from: {os.path.abspath(__file__)}")
-    print(f"I received the value: {sample_per_category}")
-    #Get the file path
-    base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data') #os.path twice, up to root and back down to 'data'
-    file_path = os.path.join(base_path, "dataset.json")
-
-    with open(file_path, "r") as f:
+def load_tests(sample_per_category: Optional[int] = None) -> List[Dict]:
+    """Balanced loader for the evaluation dataset."""
+    data_path = Path(__file__).parent.parent / 'data'
+    file_path = data_path / "dataset.json"
+    with open(file_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-
-    # --- OLD BEHAVIOR (If no parameter is passed) ---
     if sample_per_category is None or sample_per_category == "full":
         return data
-    
-    # --- NEW EXTEND LOGIC (If a number is passed) ---
-    from collections import defaultdict
-    import random
-    
-    
-    
-    #Group by category
     by_cat = defaultdict(list)
     for item in data:
-        by_cat[item['Category']].append(item)
-
-    
-
-    # Sample N for each
+        by_cat[item.get('Category', 'General')].append(item)
     sampled = []
-    for cat, items in by_cat.items():
-        count = min(len(items), int(sample_per_category)) #we use min in case one category has less than requested sample
+    n = int(sample_per_category)
+    for items in by_cat.values():
+        count = min(len(items), n)
         sampled.extend(random.sample(items, count))
-
-    # Save the sampled version and overwite if aready there
-    sampled_path = os.path.join(base_path, "samples/dataset_sampled.json")
-    with open(sampled_path, "w", encoding ='utf-8') as f:
-        json.dump(sampled, f, indent = 2, ensure_ascii=False)
-
     return sampled
 
-
-
-
-    
-#eval_dataset = load_tests(1)
-#prompt = get_system_prompt()
-
-def run_evaluation(prompt, eval_dataset):
+def run_evaluation(prompt, eval_dataset, verbose):
     stats = {"pass": 0, "fail": 0}
-    category_stats = {} #Storing the categories of the queries
+    category_stats = {}
     failures = []
     full_results = []
 
-    print(f"Starting Eval with Prompt:    {prompt[:50]}...")
+    if verbose:
+        print(f"\n🚀 STARTING EVALUATION | Dataset: {len(eval_dataset)} items", flush=True)
 
     for item in eval_dataset:
-        #1. Get the router answer
-        prediction = routertest(item['query'], prompt, model= "llama3")
-        #Standarize
-        actual_search = (prediction.upper() == "SEARCH")
-        expected_search = item['needs_search']
-        is_correct = (actual_search == expected_search)
-        status_icon = "\u2705" if is_correct else "\u274C"
-        print(f" Query: {item['query'][:50]}...")
-        print(f" Expected {'SEARCH' if expected_search else 'INTERNAL'}")
-        print(f" Actual: {prediction} {status_icon}\n")
-        print(f" Category: {item['Category'][:50]}...")
-
+        prediction = routertest(item['query'], prompt)
+        
+        is_correct = ((prediction == "SEARCH") == item['needs_search'])
         cat = item.get('Category', 'General')
+        
+        # --- THE "PAINTING" LOGIC ---
+        if verbose:
+            icon = "✅" if is_correct else "❌"
+            print(f" Query: {item['query'][:50]}...")
+            print(f" Expected: {'SEARCH' if item['needs_search'] else 'INTERNAL'} | Actual: {prediction} {icon}\n", flush=True)
 
-        #If we haven't found this category yet, start it at 0.
         if cat not in category_stats:
             category_stats[cat] = {"pass": 0, "total": 0}
+        category_stats[cat]["total"] += 1
 
-        category_stats[cat]["total"] += 1              
-
-        #We compare the results and we increment 1 if pass
-        if actual_search == expected_search:
+        if is_correct:
             stats["pass"] += 1
             category_stats[cat]["pass"] += 1
-
-            
         else:
             stats["fail"] += 1
-            
             failures.append({
                 "query": item['query'],
-                "expected": "SEARCH" if expected_search else "INTERNAL",
+                "category": cat,
+                "expected": "SEARCH" if item['needs_search'] else "INTERNAL",
                 "actual": prediction
-                })
-        #4. Record the full snapshot 
-        #Storing this into the full_results
-        full_results.append({
-            "query": item['query'],
-            "category": cat,
-            "expected": "SEARCH" if expected_search else "INTERNAL",
-            "actual": prediction,
-            "is_correct": is_correct
-        })
-    #Final reporting 
-    total = len(eval_dataset)
-    accuracy = (stats["pass"]/ total)* 100
-    print(f"\n--- EVALUATION COMPLETE ---")
-    print(f"Accuracy: {accuracy:2f}% ({stats['pass']}/{total})")
-    print(f"\n--- CAEGOR BREAKDOWN ---")
-    for cat, data in category_stats.items():
-        acc = (data["pass"]/data["total"])*100
-        print(f"{cat}: {acc:.1f}% ({data['pass']}/{data['total']})")
+            })
+        
+        full_results.append({"query": item['query'], "category": cat, "is_correct": is_correct})
 
-    if failures:
-        print("\n FAILURES LIST:")
-        for i,f in enumerate(failures, 1):
-            print(f"{i}, Query: {f['query']}")
-            print(f"Should be: {f['expected']} | But AI said: {f['actual']}\n")
-    else:
-        print("\n Perfect Score! No failures.")
-    #save_markdown_report(accuracy, stats, category_stats, failures)
+    accuracy = (stats["pass"] / len(eval_dataset)) * 100
+
+    if verbose:
+        print(f"📊 Accuracy: {accuracy:.2f}% ({stats['pass']}/{len(eval_dataset)})", flush=True)
+        print("\n🗂️  CATEGORY BREAKDOWN:", flush=True)
+        for c, d in category_stats.items():
+            print(f" - {c}: {(d['pass']/d['total'])*100:.1f}%", flush=True)
+
     return accuracy, stats, category_stats, failures, full_results
+
+# --- END OF FILE ---

@@ -1,18 +1,13 @@
 [
   {
-    "query": "Is the Dyson Airwrap cheaper to buy in London or New York right now?",
+    "query": "Find the best deals on 1TB NVMe SSDs available this week.",
     "needs_search": true,
     "Category": "Product & Price Comparison"
   },
   {
-    "query": "Is the Logitech MX Master 3S cheaper to buy refurbished?",
+    "query": "Is the Nintendo Switch 2 (or latest model) available for pre-order yet?",
     "needs_search": true,
     "Category": "Product & Price Comparison"
-  },
-  {
-    "query": "What is the process by which plants make their food?",
-    "needs_search": false,
-    "Category": "Static World Knowledge"
   },
   {
     "query": "Which planet is known as the Red Planet?",
@@ -20,14 +15,24 @@
     "Category": "Static World Knowledge"
   },
   {
-    "query": "What is the current gold spot price per ounce?",
+    "query": "What is the largest mammal on Earth?",
+    "needs_search": false,
+    "Category": "Static World Knowledge"
+  },
+  {
+    "query": "Which movie is currently #1 at the US box office this morning?",
     "needs_search": true,
     "Category": "Real-Time Data Streams"
   },
   {
-    "query": "What is the current Bitcoin dominance percentage in the crypto market?",
+    "query": "Is the flight LH400 from Frankfurt to New York on time today?",
     "needs_search": true,
     "Category": "Real-Time Data Streams"
+  },
+  {
+    "query": "Is the local farmers market in Portland happening today?",
+    "needs_search": true,
+    "Category": "Local & Geo-Specific"
   },
   {
     "query": "What are the reviews for 'The Breakfast Club' cafe in London?",
@@ -35,87 +40,82 @@
     "Category": "Local & Geo-Specific"
   },
   {
-    "query": "Are there any gluten-free bakeries in Melbourne?",
-    "needs_search": true,
-    "Category": "Local & Geo-Specific"
-  },
-  {
-    "query": "What is the next number in the sequence: 2, 4, 8, 16, ...?",
+    "query": "How many faces does a dodecahedron have?",
     "needs_search": false,
     "Category": "Mathematics & Logic"
   },
   {
-    "query": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
+    "query": "If a car travels at 60 mph, how far will it go in 2.5 hours?",
     "needs_search": false,
     "Category": "Mathematics & Logic"
   },
   {
-    "query": "What were the casualties in the Iranian ballistic missile strike on Beit Shemesh yesterday?",
+    "query": "What did Keir Starmer say about energy bill reductions in his April 1 cost-of-living statement?",
     "needs_search": true,
     "Category": "Breaking News & Current Events"
   },
   {
-    "query": "What is the result of the preliminary injunction request by Anthropic against the Pentagon?",
+    "query": "What is the status of the stranded humpback whale in the Baltic Sea as of today?",
     "needs_search": true,
     "Category": "Breaking News & Current Events"
   },
   {
-    "query": "How do you say 'Thank you' in ten different languages?",
+    "query": "What are some synonyms for the word 'ubiquitous'?",
     "needs_search": false,
     "Category": "Language & Translation"
   },
   {
-    "query": "Rewrite this sentence in a more formal tone: 'I'm sorry I can't come to your party.'",
+    "query": "What is a 'portmanteau'? Provide three examples.",
     "needs_search": false,
     "Category": "Language & Translation"
   },
   {
-    "query": "You are a professional negotiator. Help me figure out how to ask for a raise.",
+    "query": "Pretend you are a sophisticated vampire from the 16th century explaining modern technology.",
     "needs_search": false,
     "Category": "Roleplay & Persona"
   },
   {
-    "query": "Pretend you are a tree that has lived for 500 years. Tell me what you've seen.",
+    "query": "Roleplay as a pretentious art critic reviewing a drawing of a stick figure.",
     "needs_search": false,
     "Category": "Roleplay & Persona"
   },
   {
-    "query": "How do you handle exceptions in Java?",
+    "query": "How do you perform an inner join in SQL?",
     "needs_search": false,
     "Category": "Technical & Coding"
   },
   {
-    "query": "What is a 'decorator' in Python?",
+    "query": "How do you define a primary key in SQL?",
     "needs_search": false,
     "Category": "Technical & Coding"
   },
   {
-    "query": "What is the user's primary complaint in this support ticket? [Text]",
+    "query": "List all the ingredients mentioned in this cooking story: [Text]",
     "needs_search": false,
     "Category": "Summarization & Extraction"
   },
   {
-    "query": "Summarize this scientific abstract into a single tweet: [Text]",
+    "query": "Summarize the plot of this book chapter: [Text]",
     "needs_search": false,
     "Category": "Summarization & Extraction"
   },
   {
-    "query": "Who won the 2024 Pulitzer Prize for Fiction?",
+    "query": "What was the magnitude of the major earthquake in Japan in January 2024?",
     "needs_search": true,
     "Category": "Post-Cutoff Knowledge"
   },
   {
-    "query": "Who won the 2024 UEFA Champions League final?",
+    "query": "Which space agency launched the Europa Clipper mission in 2024?",
     "needs_search": true,
     "Category": "Post-Cutoff Knowledge"
   },
   {
-    "query": "Create a tagline for a luxury brand of fountain pens.",
+    "query": "Give me some alternative lyrics to 'Twinkle Twinkle Little Star'.",
     "needs_search": false,
     "Category": "Creative Writing & Brainstorming"
   },
   {
-    "query": "What are some creative ways to reuse old glass jars?",
+    "query": "Suggest 3 ways to start a speech about the importance of literacy.",
     "needs_search": false,
     "Category": "Creative Writing & Brainstorming"
   }

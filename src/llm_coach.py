@@ -56,44 +56,78 @@ def call_coach_llm(current_prompt, failures, model, temperature, timeout):
         print(f"⚠️ Coach Error: {e}")
         return None
 
-def auto_optimize(initial_prompt, eval_dataset, max_iterations, coach_model, temperature, timeout, patience_limit,verbose):
+def auto_optimize(initial_prompt, eval_dataset, max_iterations, coach_model, temperature, timeout, patience_limit, verbose):
+    from src.config_utils import load_config
+    from src.reporter import generate_pro_report
+    
+    cfg = load_config()
     best_prompt = initial_prompt
     patience = 0
+    history_log = []
 
-    # 1. Baseline using YOUR variable names
+    # 1. Baseline
     print("📊 Establishing baseline performance...")
-    best_accuracy, stats, category_stats, failures, full_results = run_evaluation(best_prompt, eval_dataset,verbose)
+    best_accuracy, stats, category_stats, failures, full_results = run_evaluation(best_prompt, eval_dataset, verbose)
     save_snapshot(best_accuracy, stats, category_stats, failures, full_results, best_prompt)
 
-    # Configuration
-    model = coach_model
-    temperature = temperature
+    # Capture initial state for the report summary
+    initial_data = {
+        "prompt": initial_prompt,
+        "accuracy": best_accuracy,
+        "category_stats": category_stats.copy(),
+        "failures": failures.copy()
+    }
+    
+    # Log baseline to history
+    history_log.append({
+        "iteration": 0,
+        "accuracy": best_accuracy,
+        "full_results": full_results
+    })
 
     for i in range(max_iterations):
         print(f"\n🚀 --- Optimization Round {i+1} ---")
 
-        new_prompt = call_coach_llm(best_prompt, failures, model, temperature, timeout)
+        new_prompt = call_coach_llm(best_prompt, failures, coach_model, temperature, timeout)
         
         if not new_prompt:
             print("❌ Coach failure, skipping round.")
             continue
 
-        # 2. Evaluate with YOUR names
-        new_accuracy, new_stats, new_category_stats, new_failures, new_full_report = run_evaluation(new_prompt, eval_dataset,verbose)
+        # 2. Evaluate
+        new_accuracy, new_stats, new_category_stats, new_failures, new_full_report = run_evaluation(new_prompt, eval_dataset, verbose)
+
+        # Record this round in history (for the detailed section of the report)
+        history_log.append({
+            "iteration": i + 1,
+            "accuracy": new_accuracy,
+            "full_results": new_full_report
+        })
 
         # 3. Comparison
         if new_accuracy > best_accuracy:
             print(f"📈 Improvement! {best_accuracy:.2f}% -> {new_accuracy:.2f}%")
             best_accuracy = new_accuracy
             best_prompt = new_prompt
-            failures = new_failures # Update failure log for the next round
+            failures = new_failures 
+            category_stats = new_category_stats # Keep track of the best category stats
             patience = 0 
             save_snapshot(new_accuracy, new_stats, new_category_stats, new_failures, new_full_report, new_prompt)
         else:
-            print(f"📉 No improvement ({new_accuracy:.2f}%). Patience: {patience + 1}/3")
+            print(f"📉 No improvement ({new_accuracy:.2f}%). Patience: {patience + 1}/{patience_limit}")
             patience += 1
             if patience >= patience_limit:
                 print("🏁 Reached local maximum. Stopping.")
                 break
+    
+    # 4. Final Reporting
+    final_data = {
+        "prompt": best_prompt,
+        "accuracy": best_accuracy,
+        "category_stats": category_stats,
+        "failures": failures
+    }
+    
+    generate_pro_report(initial_data, final_data, history_log, cfg)
                 
     return best_prompt

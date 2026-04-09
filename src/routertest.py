@@ -67,6 +67,7 @@ def run_evaluation(prompt, eval_dataset, verbose):
         print(f"\n🚀 STARTING EVALUATION | Dataset: {len(eval_dataset)} items", flush=True)
 
     for item in eval_dataset:
+        expected_search = item['needs_search'] 
         prediction = routertest(item['query'], prompt)
         
         is_correct = ((prediction == "SEARCH") == item['needs_search'])
@@ -75,7 +76,7 @@ def run_evaluation(prompt, eval_dataset, verbose):
         # --- THE "PAINTING" LOGIC ---
         if verbose:
             icon = "✅" if is_correct else "❌"
-            print(f" Query: {item['query'][:50]}...")
+            print(f" Query: {item['query'][:50]}...", flush= True)
             print(f" Expected: {'SEARCH' if item['needs_search'] else 'INTERNAL'} | Actual: {prediction} {icon}\n", flush=True)
 
         if cat not in category_stats:
@@ -94,7 +95,13 @@ def run_evaluation(prompt, eval_dataset, verbose):
                 "actual": prediction
             })
         
-        full_results.append({"query": item['query'], "category": cat, "is_correct": is_correct})
+        full_results.append({
+        "query": item['query'],
+        "category": cat,
+        "expected": "SEARCH" if expected_search else "INTERNAL", # Add this
+        "actual": prediction,                                   # Add this
+        "is_correct": is_correct
+            })  
 
     accuracy = (stats["pass"] / len(eval_dataset)) * 100
 

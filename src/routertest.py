@@ -59,31 +59,36 @@ def load_tests(sample_per_category: Optional[int] = None) -> List[Dict]:
 
 def run_evaluation(prompt, eval_dataset, verbose):
     stats = {"pass": 0, "fail": 0}
-    # 1. New Bias Counters
-    type_1 = 0  # Should Search but didn't
-    type_2 = 0  # Should NOT Search but did
-    
+    type_1 = 0 
+    type_2 = 0 
     category_stats = {}
     failures = []
     full_results = []
+    # --- NEW: Log Buffer ---
+    eval_logs = [] 
 
+    header = f"\n🚀 STARTING EVALUATION | Dataset: {len(eval_dataset)} items"
+    eval_logs.append(header)
     if verbose:
-        print(f"\n🚀 STARTING EVALUATION | Dataset: {len(eval_dataset)} items", flush=True)
+        print(header, flush=True)
 
     for item in eval_dataset:
         expected_search = item['needs_search'] 
         prediction = routertest(item['query'], prompt)
         
-        # Fixing the normalization bug we found yesterday to ensure correct counts
         actual_search = (str(prediction).strip().upper() == "SEARCH")
         is_correct = (actual_search == expected_search)
-        
         cat = item.get('Category', 'General')
         
+        # Construct the log line
+        icon = "✅" if is_correct else "❌"
+        expected_str = 'SEARCH' if expected_search else 'INTERNAL'
+        log_line = f" Query: {item['query'][:50]}... | Expected: {expected_str} | Actual: {prediction} {icon}"
+        
+        eval_logs.append(log_line) # Buffer it
         if verbose:
-            icon = "✅" if is_correct else "❌"
-            print(f" Query: {item['query'][:50]}...", flush=True)
-            print(f" Expected: {'SEARCH' if expected_search else 'INTERNAL'} | Actual: {prediction} {icon}\n", flush=True)
+            print(f" Query: {item['query'][:50]}...")
+            print(f" Expected: {expected_str} | Actual: {prediction} {icon}\n", flush=True)
 
         if cat not in category_stats:
             category_stats[cat] = {"pass": 0, "total": 0}
@@ -94,8 +99,6 @@ def run_evaluation(prompt, eval_dataset, verbose):
             category_stats[cat]["pass"] += 1
         else:
             stats["fail"] += 1
-            
-            # 2. Assign Bias Type
             if expected_search and not actual_search:
                 type_1 += 1
             elif not expected_search and actual_search:
@@ -104,47 +107,39 @@ def run_evaluation(prompt, eval_dataset, verbose):
             failures.append({
                 "query": item['query'],
                 "category": cat,
-                "expected": "SEARCH" if expected_search else "INTERNAL",
+                "expected": expected_str,
                 "actual": prediction
             })
         
         full_results.append({
             "query": item['query'],
             "category": cat,
-            "expected": "SEARCH" if expected_search else "INTERNAL",
+            "expected": expected_str,
             "actual": prediction,
             "is_correct": is_correct
         })  
 
     accuracy = (stats["pass"] / len(eval_dataset)) * 100
 
-    # 3. Calculate Bias Metric % based on your 50/50 formula
     total_failures = type_1 + type_2
     bias_percentage = 0.0
     bias_direction = "Neutral"
 
     if total_failures > 0:
         larger_error = max(type_1, type_2)
-        # Your Formula: ((max / total) - 0.5) * 2 * 100
         bias_percentage = ((larger_error / total_failures) - 0.5) * 2 * 100
-        
-        if type_1 > type_2:
-            bias_direction = "Type 1 (Should Search but didn't)"
-        elif type_2 > type_1:
-            bias_direction = "Type 2 (Shouldn't Search but did)"
+        bias_direction = "Type 1 (Should Search but didn't)" if type_1 > type_2 else "Type 2 (Shouldn't Search but did)"
 
     bias_metrics = {
-        "type_1": type_1,
-        "type_2": type_2,
+        "type_1": type_1, "type_2": type_2,
         "percentage": round(bias_percentage, 1),
         "direction": bias_direction
     }
 
+    summary_line = f"📊 Accuracy: {accuracy:.2f}% | Bias: {bias_percentage}% towards {bias_direction}"
+    eval_logs.append(summary_line)
     if verbose:
-        print(f"📊 Accuracy: {accuracy:.2f}% | Bias: {bias_percentage}% towards {bias_direction}", flush=True)
+        print(summary_line, flush=True)
 
-    # RETURN 6 VALUES (Added bias_metrics)
-    return accuracy, stats, category_stats, failures, full_results, bias_metrics
-
-
-# --- END OF FILE ---
+    # RETURN 7 VALUES (Added eval_logs)
+    return accuracy, stats, category_stats, failures, full_results, bias_metrics, eval_logs

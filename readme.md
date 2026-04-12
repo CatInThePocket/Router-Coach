@@ -33,6 +33,12 @@ Every session generates a detailed **Markdown Report** featuring:
 - **Category Breakdown**: Performance across different query types (Weather, News, etc.).
 - **Evolution Logs**: A round-by-round history of every prompt version used.
 
+### 3. High-Performance Logging (Non-Blocking)
+To maintain real-time terminal "painting" without the latency of disk I/O, I implemented a **Buffered Logger**:
+- **Real-Time Monitoring**: Evaluation results are flushed to the terminal instantly using `print(flush=True)`.
+- **Memory-Buffered Logs**: To avoid slowing down the LLM coaching rounds, detailed query logs are held in a memory buffer.
+- **Atomic Log Dump**: The full session log is written to the disk in a single operation only after the optimization process completes, ensuring zero performance impact on the training loop.
+
 ## 📂 Project Structure
 - `src/`: Core logic (Router evaluation, Coaching, and History).
 - `data/`: Evaluation datasets and sampled test sets.

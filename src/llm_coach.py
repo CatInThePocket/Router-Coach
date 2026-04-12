@@ -76,19 +76,27 @@ def call_coach_llm(current_prompt, failures, model, temperature, timeout, bias_m
 def auto_optimize(initial_prompt, eval_dataset, max_iterations, coach_model, temperature, timeout, patience_limit, verbose):
     from src.config_utils import load_config
     from src.reporter import generate_pro_report
+    import datetime
+    from pathlib import Path
     
     cfg = load_config()
     best_prompt = initial_prompt
     patience = 0
     history_log = []
+    # --- NEW: Master Log Buffer ---
+    master_log_buffer = []
 
     # 1. Baseline
     print("📊 Establishing baseline performance...")
-    # Catching 6 variables now
-    best_accuracy, stats, category_stats, failures, full_results, bias_metrics = run_evaluation(best_prompt, eval_dataset, verbose)
+    # Catching 7 variables now (including eval_logs)
+    best_accuracy, stats, category_stats, failures, full_results, bias_metrics, eval_logs = run_evaluation(best_prompt, eval_dataset, verbose)
+    
+    # Store baseline logs
+    master_log_buffer.append(f"--- BASELINE EVALUATION ---")
+    master_log_buffer.extend(eval_logs)
+    
     save_snapshot(best_accuracy, stats, category_stats, failures, full_results, best_prompt)
 
-    # Capture initial state for report summary (including bias)
     initial_data = {
         "prompt": initial_prompt,
         "accuracy": best_accuracy,
@@ -97,7 +105,6 @@ def auto_optimize(initial_prompt, eval_dataset, max_iterations, coach_model, tem
         "bias": bias_metrics
     }
     
-    # Log baseline to history (including prompt and bias)
     history_log.append({
         "iteration": 0,
         "prompt": initial_prompt,
@@ -106,22 +113,26 @@ def auto_optimize(initial_prompt, eval_dataset, max_iterations, coach_model, tem
         "full_results": full_results
     })
 
-    current_bias = bias_metrics # Keep track for the coach call
+    current_bias = bias_metrics 
 
     for i in range(max_iterations):
         print(f"\n🚀 --- Optimization Round {i+1} ---")
 
-        # Added current_bias to the coach call
         new_prompt = call_coach_llm(best_prompt, failures, coach_model, temperature, timeout, current_bias)
         
         if not new_prompt:
             print("❌ Coach failure, skipping round.")
+            master_log_buffer.append(f"Round {i+1}: Coach Failure")
             continue
 
-        # 2. Evaluate (Catching 6 variables)
-        new_accuracy, new_stats, new_category_stats, new_failures, new_full_report, new_bias = run_evaluation(new_prompt, eval_dataset, verbose)
+        # 2. Evaluate (Catching 7 variables)
+        new_accuracy, new_stats, new_category_stats, new_failures, new_full_report, new_bias, eval_logs = run_evaluation(new_prompt, eval_dataset, verbose)
 
-        # Log every round to history for the detailed section
+        # Store logs for this round
+        master_log_buffer.append(f"\n--- OPTIMIZATION ROUND {i+1} ---")
+        master_log_buffer.append(f"Prompt used: {new_prompt[:100]}...") # Log a snippet of the prompt
+        master_log_buffer.extend(eval_logs)
+
         history_log.append({
             "iteration": i + 1,
             "prompt": new_prompt,
@@ -133,22 +144,28 @@ def auto_optimize(initial_prompt, eval_dataset, max_iterations, coach_model, tem
         # 3. Comparison
         if new_accuracy > best_accuracy:
             print(f"📈 Improvement! {best_accuracy:.2f}% -> {new_accuracy:.2f}%")
-            best_accuracy = new_accuracy
-            best_prompt = new_prompt
-            failures = new_failures 
-            current_bias = new_bias # Update bias for the next coach round
-            category_stats = new_category_stats 
-            patience = 0 # Reset patience because we improved
+            best_accuracy, best_prompt, failures, current_bias, category_stats = new_accuracy, new_prompt, new_failures, new_bias, new_category_stats
+            patience = 0 
             save_snapshot(new_accuracy, new_stats, new_category_stats, new_failures, new_full_report, new_prompt)
         else:
             patience += 1
             print(f"📉 No improvement ({new_accuracy:.2f}%). Patience: {patience}/{patience_limit}")
-            # If no improvement, we keep the previous best_prompt and failures for the next try
             if patience >= patience_limit:
                 print("🏁 Reached local maximum. Stopping.")
+                master_log_buffer.append("Patience limit reached. Stopping.")
                 break
     
-    # 4. Final Reporting
+    # 4. FINAL ATOMIC LOG DUMP
+    log_dir = Path(cfg['paths']['snapshot_dir']).parent / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / "session.log"
+    
+    with open(log_file, "w", encoding="utf-8") as f:
+        f.write("\n".join(master_log_buffer))
+    
+    print(f"📝 Atomic Log Dump completed: {log_file.absolute()}")
+
+    # 5. Final Reporting
     final_data = {
         "prompt": best_prompt,
         "accuracy": best_accuracy,

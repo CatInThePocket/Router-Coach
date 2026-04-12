@@ -1,3 +1,93 @@
-2026-04-12 20:34:05,076 - Initializing Prompt Optimizer with Config...
-2026-04-12 20:34:05,078 - Starting optimization with initial prompt (length: 935)
-2026-04-12 20:35:45,989 - Optimization process completed successfully.
+--- BASELINE EVALUATION ---
+
+🚀 STARTING EVALUATION | Dataset: 12 items
+ Query: Compare the monthly cost of YouTube TV vs Hulu + L... | Expected: SEARC2026-04-12 23:04:15,638 - Optimization process completed successfully.
+... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: What is the current yield on the US 10-year Treasu... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Are there any halal-certified restaurants in Seoul... | Expected: SEARCH | Actual: INTERNAL ❌
+ Query: If a car travels at 60 mph, how far will it go in ... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Who is the new favorite to succeed Ali Khamenei as... | Expected: SEARCH | Actual: INTERNAL ❌
+ Query: How do you write 'Happy Birthday' in Traditional C... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Roleplay as a weary traveler who just arrived at a... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: How do I center a div using Flexbox?... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Extract all email addresses from this text block: ... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: What was the final inflation rate in the US for th... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Create a tagline for a luxury brand of fountain pe... | Expected: INTERNAL | Actual: INTERNAL ✅
+📊 Accuracy: 83.33% | Bias: 100.0% towards Type 1 (Should Search but didn't)
+
+--- OPTIMIZATION ROUND 1 ---
+Prompt used: "You are a specialized router tasked with determining if a query requires real-time internet data."
+...
+
+🚀 STARTING EVALUATION | Dataset: 12 items
+ Query: Compare the monthly cost of YouTube TV vs Hulu + L... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Who is the author of 'The Great Gatsby'?... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: What is the current yield on the US 10-year Treasu... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Are there any halal-certified restaurants in Seoul... | Expected: SEARCH | Actual: INTERNAL ❌
+ Query: If a car travels at 60 mph, how far will it go in ... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Who is the new favorite to succeed Ali Khamenei as... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: How do you write 'Happy Birthday' in Traditional C... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Roleplay as a weary traveler who just arrived at a... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: How do I center a div using Flexbox?... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Extract all email addresses from this text block: ... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: What was the final inflation rate in the US for th... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Create a tagline for a luxury brand of fountain pe... | Expected: INTERNAL | Actual: INTERNAL ✅
+📊 Accuracy: 91.67% | Bias: 100.0% towards Type 1 (Should Search but didn't)
+
+--- OPTIMIZATION ROUND 2 ---
+Prompt used: "You are a specialized router tasked with determining if a query requires real-time internet data."
+...
+
+🚀 STARTING EVALUATION | Dataset: 12 items
+ Query: Compare the monthly cost of YouTube TV vs Hulu + L... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Who is the author of 'The Great Gatsby'?... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: What is the current yield on the US 10-year Treasu... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Are there any halal-certified restaurants in Seoul... | Expected: SEARCH | Actual: INTERNAL ❌
+ Query: If a car travels at 60 mph, how far will it go in ... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Who is the new favorite to succeed Ali Khamenei as... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: How do you write 'Happy Birthday' in Traditional C... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Roleplay as a weary traveler who just arrived at a... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: How do I center a div using Flexbox?... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Extract all email addresses from this text block: ... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: What was the final inflation rate in the US for th... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Create a tagline for a luxury brand of fountain pe... | Expected: INTERNAL | Actual: INTERNAL ✅
+📊 Accuracy: 91.67% | Bias: 100.0% towards Type 1 (Should Search but didn't)
+
+--- OPTIMIZATION ROUND 3 ---
+Prompt used: "You are a specialized router tasked with determining if a query requires real-time internet data."
+...
+
+🚀 STARTING EVALUATION | Dataset: 12 items
+ Query: Compare the monthly cost of YouTube TV vs Hulu + L... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Who is the author of 'The Great Gatsby'?... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: What is the current yield on the US 10-year Treasu... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Are there any halal-certified restaurants in Seoul... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: If a car travels at 60 mph, how far will it go in ... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Who is the new favorite to succeed Ali Khamenei as... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: How do you write 'Happy Birthday' in Traditional C... | Expected: INTERNAL | Actual: SEARCH ❌
+ Query: Roleplay as a weary traveler who just arrived at a... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: How do I center a div using Flexbox?... | Expected: INTERNAL | Actual: SEARCH ❌
+ Query: Extract all email addresses from this text block: ... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: What was the final inflation rate in the US for th... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Create a tagline for a luxury brand of fountain pe... | Expected: INTERNAL | Actual: SEARCH ❌
+📊 Accuracy: 75.00% | Bias: 100.0% towards Type 2 (Shouldn't Search but did)
+
+--- OPTIMIZATION ROUND 4 ---
+Prompt used: "You are a specialized router tasked with determining if a query requires real-time internet data."
+...
+
+🚀 STARTING EVALUATION | Dataset: 12 items
+ Query: Compare the monthly cost of YouTube TV vs Hulu + L... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Who is the author of 'The Great Gatsby'?... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: What is the current yield on the US 10-year Treasu... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Are there any halal-certified restaurants in Seoul... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: If a car travels at 60 mph, how far will it go in ... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: Who is the new favorite to succeed Ali Khamenei as... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: How do you write 'Happy Birthday' in Traditional C... | Expected: INTERNAL | Actual: SEARCH ❌
+ Query: Roleplay as a weary traveler who just arrived at a... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: How do I center a div using Flexbox?... | Expected: INTERNAL | Actual: SEARCH ❌
+ Query: Extract all email addresses from this text block: ... | Expected: INTERNAL | Actual: INTERNAL ✅
+ Query: What was the final inflation rate in the US for th... | Expected: SEARCH | Actual: SEARCH ✅
+ Query: Create a tagline for a luxury brand of fountain pe... | Expected: INTERNAL | Actual: INTERNAL ✅
+📊 Accuracy: 83.33% | Bias: 100.0% towards Type 2 (Shouldn't Search but did)
+Patience limit reached. Stopping.

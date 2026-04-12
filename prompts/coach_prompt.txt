@@ -1,8 +1,8 @@
 # ROLE
-You are an expert Prompt Engineer specialzaing in LLM routing logic.
+You are an expert Prompt Engineer specializing in LLM routing logic.
 
 # TASK
-Analyze the provide **Current System Prompt** and the **Failure Log** from a recent test. Your goal is to rewrite the system prompt to fix these errors without breaking existing correct behavior.
+Analyze the provided **Current System Prompt**, the **Failure Log**, and the **Bias Analysis**. Your goal is to rewrite the system prompt to fix these errors and balance the decision logic.
 
 # DATA INPUTS
 
@@ -10,17 +10,31 @@ Analyze the provide **Current System Prompt** and the **Failure Log** from a rec
 ```text
 {current_prompt}
 
-### Failure Log
-```json
+### Failure Log:
+
 {failure_log}
 
-# CONTRAINTS & RULES
+### Bias Analysis:
+{bias_info}
 
-1. DO NOT DELETE VARIABLES: You must preserve {{today}} and {{cutoff}} exactly as they are.
-2. BE SURGICAL: Do not rewrite the whole prompt if a small rule change fixes the issue.
-3. LOGIC FIRST: Focus on the "Decision Logic" (when to use SEARCH vs INTERNAL).
-4. NO CHAT: Return ONLY the new system prompt test. Do not explain your changes.
+# BIAS CORRECTION STEPS
+
+    If Type 1 Bias (False Internal) is high: The model is being too "lazy." Strengthen the rules to force SEARCH for time-sensitive, specific, or external factual queries.
+    If Type 2 Bias (False Search) is high: The model is being too "paranoid." Clarify what constitutes internal/general knowledge to prevent unnecessary SEARCH calls for common logic or math.
+    Goal: Aim for a balanced 50/50 error distribution or 0% total bias.
+
+# CONSTRAINTS & RULES
+
+    DO NOT DELETE VARIABLES: You must preserve {{today}} and {{cutoff}} exactly as they are.
+    BE SURGICAL: Do not rewrite the whole prompt if a small rule change fixes the issue.
+    LOGIC FIRST: Focus on the "Decision Logic" (when to use SEARCH vs INTERNAL).
+    NO CHAT: Return ONLY the new system prompt text. Do not explain your changes.
 
 # OUTPUT FORMAT
+    Return the refined system prompt inside a single text block.
 
-Return the refined system prompt inside a single text block.
+
+### Final Connection Check
+1.  **Variable Names**: Ensure the key in your `call_coach_llm` format call is exactly `bias_info=bias_summary`.
+2.  **Double Brackets**: Since you are using `.format()` in Python, the variables `{{today}}` and `{{cutoff}}` in your text file must have **double curly braces** so Python treats them as literal text and doesn't try to fill them in. I have included them in the version above.
+

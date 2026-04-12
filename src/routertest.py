@@ -59,6 +59,10 @@ def load_tests(sample_per_category: Optional[int] = None) -> List[Dict]:
 
 def run_evaluation(prompt, eval_dataset, verbose):
     stats = {"pass": 0, "fail": 0}
+    # 1. New Bias Counters
+    type_1 = 0  # Should Search but didn't
+    type_2 = 0  # Should NOT Search but did
+    
     category_stats = {}
     failures = []
     full_results = []
@@ -70,14 +74,16 @@ def run_evaluation(prompt, eval_dataset, verbose):
         expected_search = item['needs_search'] 
         prediction = routertest(item['query'], prompt)
         
-        is_correct = ((prediction == "SEARCH") == item['needs_search'])
+        # Fixing the normalization bug we found yesterday to ensure correct counts
+        actual_search = (str(prediction).strip().upper() == "SEARCH")
+        is_correct = (actual_search == expected_search)
+        
         cat = item.get('Category', 'General')
         
-        # --- THE "PAINTING" LOGIC ---
         if verbose:
             icon = "✅" if is_correct else "❌"
-            print(f" Query: {item['query'][:50]}...", flush= True)
-            print(f" Expected: {'SEARCH' if item['needs_search'] else 'INTERNAL'} | Actual: {prediction} {icon}\n", flush=True)
+            print(f" Query: {item['query'][:50]}...", flush=True)
+            print(f" Expected: {'SEARCH' if expected_search else 'INTERNAL'} | Actual: {prediction} {icon}\n", flush=True)
 
         if cat not in category_stats:
             category_stats[cat] = {"pass": 0, "total": 0}
@@ -88,29 +94,57 @@ def run_evaluation(prompt, eval_dataset, verbose):
             category_stats[cat]["pass"] += 1
         else:
             stats["fail"] += 1
+            
+            # 2. Assign Bias Type
+            if expected_search and not actual_search:
+                type_1 += 1
+            elif not expected_search and actual_search:
+                type_2 += 1
+
             failures.append({
                 "query": item['query'],
                 "category": cat,
-                "expected": "SEARCH" if item['needs_search'] else "INTERNAL",
+                "expected": "SEARCH" if expected_search else "INTERNAL",
                 "actual": prediction
             })
         
         full_results.append({
-        "query": item['query'],
-        "category": cat,
-        "expected": "SEARCH" if expected_search else "INTERNAL", # Add this
-        "actual": prediction,                                   # Add this
-        "is_correct": is_correct
-            })  
+            "query": item['query'],
+            "category": cat,
+            "expected": "SEARCH" if expected_search else "INTERNAL",
+            "actual": prediction,
+            "is_correct": is_correct
+        })  
 
     accuracy = (stats["pass"] / len(eval_dataset)) * 100
 
-    if verbose:
-        print(f"📊 Accuracy: {accuracy:.2f}% ({stats['pass']}/{len(eval_dataset)})", flush=True)
-        print("\n🗂️  CATEGORY BREAKDOWN:", flush=True)
-        for c, d in category_stats.items():
-            print(f" - {c}: {(d['pass']/d['total'])*100:.1f}%", flush=True)
+    # 3. Calculate Bias Metric % based on your 50/50 formula
+    total_failures = type_1 + type_2
+    bias_percentage = 0.0
+    bias_direction = "Neutral"
 
-    return accuracy, stats, category_stats, failures, full_results
+    if total_failures > 0:
+        larger_error = max(type_1, type_2)
+        # Your Formula: ((max / total) - 0.5) * 2 * 100
+        bias_percentage = ((larger_error / total_failures) - 0.5) * 2 * 100
+        
+        if type_1 > type_2:
+            bias_direction = "Type 1 (Should Search but didn't)"
+        elif type_2 > type_1:
+            bias_direction = "Type 2 (Shouldn't Search but did)"
+
+    bias_metrics = {
+        "type_1": type_1,
+        "type_2": type_2,
+        "percentage": round(bias_percentage, 1),
+        "direction": bias_direction
+    }
+
+    if verbose:
+        print(f"📊 Accuracy: {accuracy:.2f}% | Bias: {bias_percentage}% towards {bias_direction}", flush=True)
+
+    # RETURN 6 VALUES (Added bias_metrics)
+    return accuracy, stats, category_stats, failures, full_results, bias_metrics
+
 
 # --- END OF FILE ---

@@ -1,6 +1,10 @@
 # 🚀 LLM Router Optimizer
 **Autonomous Prompt Engineering through Iterative QA Testing**
 
+
+> [!NOTE]
+> **🚧 Work in Progress:** This project is in active development. While the core engine is fully functional, I am currently refining the reporting features and bias logic. See the **Future Roadmap** at the bottom for upcoming features.
+
 ## 📖 Project Vision
 This system was designed to optimize a **Router Model** that serves as the "brain" of a larger AI ecosystem. The router decides whether a query requires internet search or can be answered using internal knowledge. If search is required, it generates an optimized search phrase for a search API, the results of which are synthesized by a larger model.
 
@@ -49,3 +53,22 @@ To maintain real-time terminal "painting" without the latency of disk I/O, I imp
 - **Snapshots**: Every evaluation generates a unique JSON snapshot.
 - **Session Logs**: Detailed runtime logs are captured in `outputs/logs/session.log`.
 - **Version Control**: Prompts are stored as discrete text files for easy A/B testing.
+
+---
+
+## 🚀 Future Roadmap
+
+I am currently iterating on several high-value features to transition this tool from a research prototype to a production-ready optimizer:
+
+### 1. Conditional Bias Correction
+While the Bias Metric is a core feature, forcing the Coach to correct it in every iteration might lead to "over-correction" in certain niche datasets. I plan to implement a configuration toggle (`bias_correction: true/false`) to allow the Coach to either act on the bias or simply observe it for reporting purposes.
+
+### 2. ROI & Economic Impact Metrics (Cost of Error)
+Prompt optimization isn't just about accuracy; it's about economics. I am exploring a weighted cost-analysis model to quantify the financial impact of routing errors:
+- **Cost of Over-Searching (Type 2 Error)**: Calculating the literal API and compute cost wasted by sending queries to a Search Provider that could have been handled internally.
+- **Cost of Under-Searching (Type 1 Error)**: Defining a metric for "Information Loss" or "Hallucination Risk" when the system fails to fetch real-time context.
+
+### 3. Cascading "Model Carousel"
+To maximize efficiency and minimize subscription costs, I am developing a **Model Carousel** logic:
+- **Local Exhaustion**: Utilizing local models (e.g., Llama 3, Gemma 2) for the bulk of the iterative cycles.
+- **Frontier Escalation**: Automatically escalating the prompt to a Frontier model (e.g., GPT-4o, Claude 3.5) only for the final high-precision refinement once local models reach a performance plateau.

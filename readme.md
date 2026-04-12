@@ -35,6 +35,7 @@ $$
 > A 0% bias indicates a perfectly balanced model, while 100% indicates a model that only makes one type of error.
 
 
+
 ### 2. Comprehensive Reporting
 Every session generates a detailed **Markdown Report** featuring:
 - **Executive Summary**: High-level delta in accuracy and bias.

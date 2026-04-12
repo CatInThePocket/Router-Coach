@@ -11,3 +11,4 @@ outputs/history/
 router_tests/
 outputs/logs/session.log
 outputs/reports/
+config.yaml

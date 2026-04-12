@@ -25,11 +25,15 @@ Rather than just a "pass/fail" percentage, I developed a custom **Directional Bi
 - **Type 1 (Lazy)**: The model fails to search when it should (False Internal).
 - **Type 2 (Paranoid)**: The model searches for general knowledge it already has (False Search).
 
-**Formula:** 
+**Formula:**
 
-$$Bias \% = \left( \frac{\max(\text{Type 1}, \text{Type 2})}{\text{Total Failures}} - 0.5 \right) \times 2 \times 100$$
+$$
+Bias \% = \left( \frac{\max(\text{Type 1}, \text{Type 2})}{\text{Total Failures}} - 0.5 \right) \times 2 \times 100
+$$
 
-> *A 0% bias indicates a perfectly balanced model, while 100% indicates a model that only makes one type of error.*
+> [!TIP]
+> A 0% bias indicates a perfectly balanced model, while 100% indicates a model that only makes one type of error.
+
 
 ### 2. Comprehensive Reporting
 Every session generates a detailed **Markdown Report** featuring:
@@ -42,6 +46,46 @@ To maintain real-time terminal "painting" without the latency of disk I/O, I imp
 - **Real-Time Monitoring**: Evaluation results are flushed to the terminal instantly using `print(flush=True)`.
 - **Memory-Buffered Logs**: To avoid slowing down the LLM coaching rounds, detailed query logs are held in a memory buffer.
 - **Atomic Log Dump**: The full session log is written to the disk in a single operation only after the optimization process completes, ensuring zero performance impact on the training loop.
+
+## 🚀 Getting Started
+
+### 1. Installation
+Clone the repository and install the necessary dependencies.
+
+```bash
+# Clone the repository
+git clone https://github.com
+cd router-optimizer
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 2. Configuration Setup
+The system uses a local `config.yaml`. A template is provided to ensure a quick setup:
+
+
+# Create your local config from the template
+cp config.yaml.example config.yaml
+
+
+*Open `config.yaml` and verify your model names (e.g., `llama3` for the router and `gemma2:9b` for the coach).*
+
+Select the different values based on the test you want to run. Number of questions will randomly select that number of questions for each category. Selecting Full will run every question for eah round.
+
+### 3. Running the Optimizer
+Start the autonomous loop by running the main script from the project root:
+
+
+python main.py
+
+
+### 4. Output & Traceability
+- **Real-time**: You will see the evaluation "painting" on your terminal.
+- **Logs**: A buffered session log is dumped to `outputs/logs/session.log`.
+- **Snapshots**: Every round is saved as a JSON snapshot in `outputs/history/`.
+- **Report**: A professional Markdown report with **Bias Analysis** is generated in `outputs/reports/`.
+
 
 ## 📂 Project Structure
 - `src/`: Core logic (Router evaluation, Coaching, and History).

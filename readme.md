@@ -28,7 +28,7 @@ Rather than just a "pass/fail" percentage, I developed a custom **Directional Bi
 **Formula:**
 
 $$
-Bias \% = \left( \frac{\max(\text{Type 1}, \text{Type 2})}{\text{Total Failures}} - 0.5 \right) \times 2 \times 100
+\text{Bias \%} = \left( \frac{\max(\text{Type 1}, \text{Type 2})}{\text{Total Failures}} - 0.5 \right) \times 2 \times 100
 $$
 
 > [!TIP]

@@ -66,6 +66,14 @@ To maintain real-time terminal "painting" without the latency of disk I/O, I imp
 
 ## 🚀 Getting Started
 
+### 0. Prerequisites
+- **Ollama** installed and running.
+- **Download Models**: The system will call these models via API. Ensure they are available locally:
+  ```bash
+  ollama pull llama3
+  ollama pull gemma2:9b
+  ```
+
 ### 1. Installation
 Clone the repository and install the necessary dependencies.
 

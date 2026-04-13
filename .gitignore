@@ -1,14 +1,22 @@
-.env
-bin/
-include/
-lib/
-lib64/
-lib64
-share/
+# Python environment and cache
 __pycache__/
+*.pyc
+.env
+venv/
+.venv/
 pyvenv.cfg
+
+# Project-specific outputs (Hide your local results)
 outputs/history/
-router_tests/
-outputs/logs/session.log
+outputs/logs/
 outputs/reports/
+data/samples/
+router_tests/
+
+# Local configuration
+# We ignore the active config so your personal tweaks stay private
 config.yaml
+
+# IDEs
+.vscode/
+.idea/

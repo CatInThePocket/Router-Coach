@@ -17,6 +17,22 @@ To achieve the perfect router prompt, I developed an autonomous training loop th
 - **Iterative Refinement**: The system only keeps changes that measurably increase accuracy.
 - **Patience Logic**: The process only stops after failing to improve the "all-time best" score for 3 consecutive rounds.
 
+## 🔄 System Flow
+```mermaid
+graph TD
+    A[Initial Prompt] --> B{Evaluation Loop}
+    B --> C[Run Dataset]
+    C --> D[Calculate Accuracy & Bias]
+    D --> E{Improvement?}
+    E -- Yes --> F[Update Best Prompt]
+    E -- No --> G[Increase Patience]
+    F --> H[Coach Analyzes Failures]
+    G --> H
+    H --> B
+    E -- Limit Reached --> I[Generate Final Report]
+```
+
+
 ## 🧪 QA-First Methodology
 Drawing from my **Software Quality Assurance (QA) background**, this project prioritizes **validation and traceability**:
 
@@ -53,12 +69,14 @@ To maintain real-time terminal "painting" without the latency of disk I/O, I imp
 ### 1. Installation
 Clone the repository and install the necessary dependencies.
 
-```bash
-# Clone the repository
-git clone https://github.com
-cd router-optimizer
 
+# Clone the repository
+git clone https://github.com/CatInThePocket/Router-Coach/
+```bash
+cd router-optimizer
+```
 # Install dependencies
+```bash
 pip install -r requirements.txt
 ```
 
@@ -67,8 +85,9 @@ The system uses a local `config.yaml`. A template is provided to ensure a quick 
 
 
 # Create your local config from the template
+```bash
 cp config.yaml.example config.yaml
-
+```
 
 *Open `config.yaml` and verify your model names (e.g., `llama3` for the router and `gemma2:9b` for the coach).*
 
@@ -87,6 +106,21 @@ python main.py
 - **Snapshots**: Every round is saved as a JSON snapshot in `outputs/history/`.
 - **Report**: A professional Markdown report with **Bias Analysis** is generated in `outputs/reports/`.
 
+## ⚙️ Configuration Reference
+
+The `config.yaml` file controls the behavior of both the Router and the Coach.
+
+
+| Section | Parameter | Description |
+| :--- | :--- | :--- |
+| **Router** | `model` | The lightweight model being optimized (e.g., `llama3`). |
+| | `timeout` | Max seconds to wait for a routing decision (default 30-180). |
+| **Coach** | `model` | The smarter model suggesting improvements (e.g., `gemma2:9b`). |
+| | `temperature` | Higher values (0.7-1.0) allow for more creative prompt ideas. |
+| | `max_iterations` | Total number of optimization rounds to attempt. |
+| | `patience_limit` | How many rounds to wait for improvement before stopping. |
+| **Paths** | `dataset` | Path to your ground-truth JSON file. |
+| | `reports_dir` | Where the final Markdown analysis will be saved. |
 
 ## 📂 Project Structure
 - `src/`: Core logic (Router evaluation, Coaching, and History).

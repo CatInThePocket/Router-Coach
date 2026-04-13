@@ -31,6 +31,11 @@ graph TD
     H --> B
     E -- Limit Reached --> I[Generate Final Report]
 ```
+---
+
+> 📊 **Live Analysis Sample**: Before diving into the technical methodology, you can view a full example of the generated optimization report here: **[Optimization_Report_Example.md](./Optimization_Report_Example.md)**
+
+---
 
 
 ## 🧪 QA-First Methodology
@@ -58,6 +63,8 @@ Every session generates a detailed **Markdown Report** featuring:
 - **Category Breakdown**: Performance across different query types (Weather, News, etc.).
 - **Evolution Logs**: A round-by-round history of every prompt version used.
 
+
+
 ### 3. High-Performance Logging (Non-Blocking)
 To maintain real-time terminal "painting" without the latency of disk I/O, I implemented a **Buffered Logger**:
 - **Real-Time Monitoring**: Evaluation results are flushed to the terminal instantly using `print(flush=True)`.
@@ -78,12 +85,12 @@ To maintain real-time terminal "painting" without the latency of disk I/O, I imp
 Clone the repository and install the necessary dependencies.
 
 
-# Clone the repository
+### Clone the repository
 git clone https://github.com/CatInThePocket/Router-Coach/
 ```bash
 cd router-optimizer
 ```
-# Install dependencies
+### Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
@@ -92,7 +99,7 @@ pip install -r requirements.txt
 The system uses a local `config.yaml`. A template is provided to ensure a quick setup:
 
 
-# Create your local config from the template
+### Create your local config from the template
 ```bash
 cp config.yaml.example config.yaml
 ```

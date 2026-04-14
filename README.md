@@ -1,8 +1,7 @@
 
----
-[🇪🇸 Leer en Español](./README_ES.md)
----
+| <sub>[🇪🇸 Leer en Español](./README_ES.md)</sub> |
 
+---
 # 🚀 LLM Router Optimizer
 **Autonomous Prompt Engineering through Iterative QA Testing**
 
